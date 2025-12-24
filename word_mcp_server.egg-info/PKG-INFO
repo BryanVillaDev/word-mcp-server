@@ -9,222 +9,214 @@ Requires-Dist: langchain-mcp-adapters
 Requires-Dist: opencv-python
 Requires-Dist: numpy
 
-# Xử lý ngon lành Microsoft Office Word với Python-Docx
+# Word MCP Server
 
-Happy New Year  
-*Bài đăng này đã không được cập nhật trong 4 năm*
+Word MCP Server là một ứng dụng Python cho phép tạo và chỉnh sửa tài liệu Microsoft Word (.docx) thông qua API. Dự án này sử dụng FastMCP để xây dựng các công cụ tương tác với tài liệu Word.
 
-Microsoft Word (MS)- một trong các tiện ích từ bộ Microsoft Office là một trong những phần mềm phổ biến trong việc tạo ra file document, hỗ trợ đọc và ghi nội dung từ đơn giản đến phức tạp. Mặc dù con người có thể trực tiếp tạo và viết nội dung lên file MS, tuy nhiên trong rất nhiều tác vụ cần máy tính xử lý và tự động tạo nội dung trên các file MS. Ví dụ bạn đọc nội dung từ file pdf và muốn chuyển nội dung sang file docx hoặc bạn đang phát triển một mô hình xử lý ngôn ngữ tự nhiên và cần đọc dữ liệu đầu vào là các file MS thì Python-Docx là một trong những thư viện rất đáng để bạn lựa chọn.
+## Cài đặt
 
-Hôm nay mình xin giới thiệu các bạn cách tạo ra tự động file MS cũng như các tính năng thêm, sửa, xóa các nội dung dưới sự hỗ trợ của thư viện Python Docx.
+### Yêu cầu
 
-## 1. Cài đặt thư viện
-Nếu các bạn đang sử dụng anaconda, các bạn có thể dễ dàng cài đặt bằng cách sau đây:
+- Python 3.12+
+- Các thư viện phụ thuộc:
+  - python-docx
+  - opencv-python (cv2)
+  - numpy
+  - FastMCP
 
-```python
-pip install python-docx
+### Cài đặt thư viện
+```bash
+uv venv
+source venv/bin/activate
+uv pip install .
 ```
 
-## 2. Khởi tạo file
-Để mở một file đã tồn tại trước đó, bạn sử dụng câu lệnh sau
+## Tính năng
 
-```python
-from docx import Document
+Word MCP Server cung cấp các công cụ để:
 
-document = Document('existing-document-file.docx')
+1. Tạo và mở tài liệu Word
+2. Thêm và định dạng văn bản
+3. Thêm hình ảnh
+4. Tạo bảng
+5. Quản lý tài nguyên và prompt
+
+## Hướng dẫn sử dụng
+
+### Cấu hình và khởi chạy với LLM
+
+Để sử dụng Word MCP Server với các mô hình ngôn ngữ lớn (LLM), bạn cần cấu hình thông qua file JSON:
+
+```json
+{
+  "mcpServers": {
+    "word-mcp-server": {
+      "command": "/path/to/word-mcp-server/.venv/bin/python3",
+      "args": ["/path/to/word-mcp-server/server.py"]
+    }
+  }
+}
 ```
 
-Nếu file này chưa tồn tại, bạn sử dụng câu lệnh sau:
+#### Giải thích cấu hình:
+
+- `mcpServers`: Object chứa cấu hình cho các MCP server
+- `word-mcp-server`: Tên định danh của server
+- `command`: Đường dẫn đến Python interpreter (thường nằm trong môi trường ảo)
+- `args`: Các tham số dòng lệnh, trong đó tham số đầu tiên là đường dẫn đến file server.py
+
+
+## Server sẽ khởi động và sẵn sàng nhận lệnh từ LLM
+
+#### Tương tác với LLM:
+
+Khi đã cấu hình và khởi chạy thành công, bạn có thể sử dụng LLM để:
+- Tạo và chỉnh sửa tài liệu Word thông qua lệnh tự nhiên
+- Tự động tạo nội dung dựa trên prompt
+- Định dạng văn bản, thêm hình ảnh và bảng một cách thông minh
+
+### Tạo tài liệu mới
 
 ```python
-document = Document()
+create_new_document()
 ```
 
-Sau khi bạn khởi tạo file, bạn có thể chỉnh sửa nội dung của file MS như thêm đoạn văn, thêm bảng, ... thông qua biến document như ví dụ bên trên. Sau khi hoàn thiện bạn có lưu lại những thay đổi bằng câu lệnh sau:
+### Mở tài liệu có sẵn
 
 ```python
-document.save(filename)
+open_document("path/to/document.docx")
 ```
 
-Ở đây, filename là tên file mà bạn muốn lưu. Tất nhiên đuôi là .docx nhé. 😃
-
-## 3. Heading, title
-Thư viện python-docx hỗ trợ ghi phần title hoặc heading của văn bản theo nhiều level mà người dùng chỉ định.
+### Thêm tiêu đề và đoạn văn
 
 ```python
-document.add_heading(content, level)
+# Thêm tiêu đề
+add_heading("Tiêu đề tài liệu", level=0)
+add_heading("Chương 1", level=1)
+
+# Thêm đoạn văn bản
+add_paragraph("Đây là nội dung đoạn văn bản.")
+
+# Thêm đoạn văn bản với định dạng
+add_paragraph(
+    "Đây là đoạn văn bản được định dạng.",
+    style="Normal",
+    font_size=14,
+    bold=True,
+    italic=False,
+    alignment=WD_PARAGRAPH_ALIGNMENT.CENTER
+)
 ```
 
-- Content: nội dung title hoặc heading
-- Level: bậc của heading (0, 1, 2, ...). Số càng nhỏ font chữ càng lớn.
-
-### 3.1. Title
-Theo mặc định của python-docx, title có level là 0
+### Thêm định dạng cho một phần văn bản
 
 ```python
-document.add_heading("This is a title part, level=0")
+# Tạo đoạn văn bản
+p = add_paragraph("Đây là đoạn văn bản cơ bản. ")
+
+# Thêm phần văn bản có định dạng khác
+add_run_to_paragraph(
+    p,
+    "Phần này được in đậm và màu đỏ.",
+    bold=True,
+    color="red"
+)
+
+# Thêm phần văn bản có highlight
+add_run_to_paragraph(
+    p,
+    " Phần này được highlight màu vàng.",
+    highlight="yellow"
+)
 ```
 
-Ta có kết quả tương ứng sẽ là:
-
-### 3.2. Heading
-Đối với các phần heading, ta có các level 1, 2, 3....
-
-**Level 1**
-```python
-document.add_heading("This is a heading 1", level=1)
-```
-
-Kết quả tương ứng:
-
-**Level 2**
-```python
-document.add_heading("This is a heading 2", level=2)
-```
-
-Kết quả tương ứng:
-
-## 4. Đoạn văn (paragraph)
-Trong các loại văn bản thông thường, chúng ta có hai cách biểu diễn nội dung của một trang đó là:
-
-- Layout truyền thống: nội dung được biển diễn từ trên xuống dưới, từ trái sang phải 
-- Layout dạng cột: Nội dung được tổ chức thành từng cột riêng rẽ với nhau 
-
-### 4.1. Layout truyền thống
-Với layout kiểu truyền thống, chúng ta ghi nội dung vào file MS như sau:
+### Thêm hình ảnh
 
 ```python
-document.add_paragraph(content)
-```
+# Thêm hình ảnh từ đường dẫn file
+add_picture("path/to/image.jpg", width=4.0)
 
-Kết quả tương ứng:
-
-### 4.2. Layout dạng cột
-Để tạo ra được các văn bản dạng cột. Chúng ta cần dùng đến khái niệm Section. Mỗi section có thể chứa nhiều các đoạn văn. Mỗi section sẽ tương đương với một page và chúng ta thông qua section để biểu diễn nội dung cho một page.
-
-Tạo layout cột cho section:
-
-```python
-from docx.enum.section import WD_SECTION_START
-
-def set_number_of_columns(section, cols):
-    """ sets number of columns through xpath. """
-    WNS_COLS_NUM = "{http://schemas.openxmlformats.org/wordprocessingml/2006/main}num"
-    section._sectPr.xpath("./w:cols")[0].set(WNS_COLS_NUM, str(cols))
-    
-section = document.add_section(WD_SECTION_START.NEW_PAGE)
-# col_nb là số lượng bố cục cột
-set_number_of_columns(section, col_nb)
-```
-
-Sau đó chúng ta thực hiện thêm đoạn văn giống như kiểu layout truyền thống. Đoạn văn sẽ được thêm theo thứ tự các cột, từ trái sang phải.
-
-```python
-p = document.add_paragraph(content)
-```
-
-Ngoài ra, chúng ta cũng có thể thêm phần căn lề (trái, phải, giữa) cho đoạn văn như sau:
-
-```python
-from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
-
-# Căn lề trái
-p.alignment = WD_PARAGRAPH_ALIGNMENT.LEFT
-
-# Căn lề phải
-p.alignment = WD_PARAGRAPH_ALIGNMENT.RIGHT
-
-# Căn lề giữa
-p.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
-
-# Căn lề hai bên
-p.alignment = WD_PARAGRAPH_ALIGNMENT.JUSTIFY
-```
-
-### 4.3. Thêm câu cho đoạn văn
-Thư viện python-docx hỗ trợ chèn thêm câu riêng lẻ vào trong đoạn văn đã được khởi tạo:
-
-```python
-# initialize new paragraph
-p = document.add_paragraph(content)
-
-# add sentence to initialized paragraph
-sentence_element = p.add_run(str(content))
-```
-
-#### 4.3.1. Highlight background
-Bạn cũng có thể highlight background cho từng câu bằng các màu yêu thích như sau:(highlight là tên màu)
-
-```python
-from docx.enum.text import WD_COLOR_INDEX
-
-if highlight == 'black':
-  color_element = WD_COLOR_INDEX.BLACK
-elif highlight == 'blue':
-  color_element = WD_COLOR_INDEX.BLUE
-elif highlight == 'green':
-  color_element = WD_COLOR_INDEX.BRIGHT_GREEN
-elif highlight == 'dark blue':
-   color_element = WD_COLOR_INDEX.DARK_BLUE
-elif highlight == 'dark red':
-  color_element = WD_COLOR_INDEX.DARK_RED
-elif highlight == 'dark yellow':
-  color_element = WD_COLOR_INDEX.DARK_YELLOW
-elif highlight == 'dark green':
-   color_element = WD_COLOR_INDEX.GREEN
-elif highlight == 'pink':
-  color_element = WD_COLOR_INDEX.PINK
-elif highlight == 'red':
-  color_element = WD_COLOR_INDEX.PINK
-elif highlight == 'white':
-  color_element = WD_COLOR_INDEX.WHITE
-elif highlight == 'teal':
-  color_element = WD_COLOR_INDEX.TEAL
-elif highlight == 'yellow':
-  color_element = WD_COLOR_INDEX.YELLOW
-elif highlight == 'violet':
-  color_element = WD_COLOR_INDEX.VIOLET
-elif highlight == 'gray25':
-  color_element = WD_COLOR_INDEX.GRAY_25
-elif highlight == 'gray50':
-  color_element = WD_COLOR_INDEX.GRAY_50
-  
-style = document.styles.add_style("document style", WD_STYLE_TYPE.CHARACTER)
-style.font.highlight_color = color_element
-sentence_element = p.add_run(str(c), style=self.style)
-```
-
-#### 4.3.2. In đậm, nghiêng, gạch chân
-Bạn cũng có thể thêm highlight cho bằng thêm in đậm, in nghiêng hay gạch chân như khi người sử dụng trực tiếp trên file MS.
-
-```python
-# set bold, italic, underline value which is boolean value True or False
-sentence_element = p.add_run(str(content))
-sentence_element.bold = bold
-sentence_element.italic = italic
-sentence_element.underline = underline
-```
-
-## 5. Picture
-Bạn cũng có thể chèn ảnh trưc tiếp vào python-docx bằng đường dẫn tới file ảnh cần chèn hoặc ảnh đã được biểu diễn dạng ma trận. Bạn cũng có thể điều chỉnh kích thước ảnh phù hợp với văn bản của mình.
-
-```python
-import cv2
-from docx.shared import Inches
-from io import BytesIO
+# Hoặc thêm hình ảnh từ ma trận numpy
 import numpy as np
+import cv2
 
+img = cv2.imread("path/to/image.jpg")
+add_picture(img, width=3.5)
+```
 
-def add_picture(document, image_path_or_stream, width):
-     """Add picture to image"""
-     if isinstance(image_path_or_stream, str):
-         img = cv2.imread(image_path_or_stream)
-     else:
-         img = np.array(image_path_or_stream)
+### Tạo bảng
 
-     is_success, im_buf_arr = cv2.imencode(".jpg", img)
-     byte_im = im_buf_arr.tobytes()
-     stream = BytesIO(byte_im)
-     document.add_picture(stream, width=Inches(width))
-     
-add_picture(document, 'example.jpg', 5.0)
+```python
+# Tạo bảng với 3 hàng và 4 cột
+table = add_table(rows=3, cols=4, style="Table Grid")
+
+# Điền dữ liệu vào bảng
+table.cell(0, 0).text = "Hàng 1, Cột 1"
+table.cell(0, 1).text = "Hàng 1, Cột 2"
+# ...
+```
+
+## Các màu hỗ trợ
+
+Khi sử dụng các tham số `color` và `highlight`, bạn có thể sử dụng các giá trị sau:
+
+- black
+- blue
+- green
+- dark blue
+- dark red
+- dark yellow
+- dark green
+- pink
+- red
+- white
+- teal
+- yellow
+- violet
+- gray25
+- gray50
+
+## Lưu ý
+
+- Dự án này sử dụng thư viện `python-docx` để tương tác với tài liệu Word
+- Các tài nguyên và prompt được lưu trữ trong thư mục `resources` và `prompts`
+- Đảm bảo bạn đã cài đặt đầy đủ các thư viện phụ thuộc trước khi chạy server
+
+## Ví dụ hoàn chỉnh
+
+```python
+# Tạo tài liệu mới
+create_new_document()
+
+# Thêm tiêu đề
+add_heading("Báo cáo dự án", level=0)
+
+# Thêm thông tin người tạo
+p = add_paragraph("Người tạo: ")
+add_run_to_paragraph(p, "Nguyễn Văn A", bold=True)
+
+# Thêm mục lục
+add_heading("Mục lục", level=1)
+add_paragraph("1. Giới thiệu")
+add_paragraph("2. Nội dung")
+add_paragraph("3. Kết luận")
+
+# Thêm nội dung
+add_heading("1. Giới thiệu", level=1)
+add_paragraph("Đây là phần giới thiệu của dự án...")
+
+# Thêm hình ảnh
+add_paragraph("Hình ảnh minh họa:")
+add_picture("project_diagram.jpg", width=5.0)
+
+# Thêm bảng dữ liệu
+add_heading("Bảng dữ liệu", level=2)
+table = add_table(rows=3, cols=3)
+table.cell(0, 0).text = "Dữ liệu 1"
+table.cell(0, 1).text = "Dữ liệu 2"
+table.cell(0, 2).text = "Dữ liệu 3"
+# Điền các dữ liệu khác...
+
+# Lưu tài liệu
+save_document("bao_cao_du_an.docx")
+```

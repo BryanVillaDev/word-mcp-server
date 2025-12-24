@@ -1,94 +1,95 @@
 # Word MCP Server
 
-Word MCP Server là một ứng dụng Python cho phép tạo và chỉnh sửa tài liệu Microsoft Word (.docx) thông qua API. Dự án này sử dụng FastMCP để xây dựng các công cụ tương tác với tài liệu Word.
+Word MCP Server es una aplicacion Python que permite crear y editar documentos Microsoft Word (.docx) a traves de API. Este proyecto utiliza FastMCP para construir herramientas de interaccion con documentos Word.
 
-## Cài đặt
+## Instalacion
 
-### Yêu cầu
+### Requisitos
 
 - Python 3.12+
-- Các thư viện phụ thuộc:
+- Bibliotecas dependientes:
   - python-docx
   - opencv-python (cv2)
   - numpy
   - FastMCP
 
-### Cài đặt thư viện
+### Instalar bibliotecas
 ```bash
 uv venv
-source venv/bin/activate
+.venv\Scripts\activate  # Windows
+# source .venv/bin/activate  # Linux/Mac
 uv pip install .
 ```
 
-## Tính năng
+## Caracteristicas
 
-Word MCP Server cung cấp các công cụ để:
+Word MCP Server proporciona herramientas para:
 
-1. Tạo và mở tài liệu Word
-2. Thêm và định dạng văn bản
-3. Thêm hình ảnh
-4. Tạo bảng
-5. Quản lý tài nguyên và prompt
+1. Crear y abrir documentos Word
+2. Agregar y formatear texto
+3. Agregar imagenes
+4. Crear tablas
+5. Gestionar recursos y prompts
 
-## Hướng dẫn sử dụng
+## Guia de uso
 
-### Cấu hình và khởi chạy với LLM
+### Configuracion e inicio con LLM
 
-Để sử dụng Word MCP Server với các mô hình ngôn ngữ lớn (LLM), bạn cần cấu hình thông qua file JSON:
+Para usar Word MCP Server con modelos de lenguaje grande (LLM), necesitas configurar a traves de un archivo JSON:
 
 ```json
 {
   "mcpServers": {
     "word-mcp-server": {
-      "command": "/path/to/word-mcp-server/.venv/bin/python3",
-      "args": ["/path/to/word-mcp-server/server.py"]
+      "command": "C:/ruta/a/word-mcp-server/.venv/Scripts/python.exe",
+      "args": ["C:/ruta/a/word-mcp-server/server.py"]
     }
   }
 }
 ```
 
-#### Giải thích cấu hình:
+#### Explicacion de la configuracion:
 
-- `mcpServers`: Object chứa cấu hình cho các MCP server
-- `word-mcp-server`: Tên định danh của server
-- `command`: Đường dẫn đến Python interpreter (thường nằm trong môi trường ảo)
-- `args`: Các tham số dòng lệnh, trong đó tham số đầu tiên là đường dẫn đến file server.py
+- `mcpServers`: Objeto que contiene la configuracion de los MCP servers
+- `word-mcp-server`: Nombre identificador del servidor
+- `command`: Ruta al interprete Python (generalmente en el entorno virtual)
+- `args`: Parametros de linea de comandos, el primer parametro es la ruta al archivo server.py
 
 
-## Server sẽ khởi động và sẵn sàng nhận lệnh từ LLM
+## El servidor se iniciara y estara listo para recibir comandos del LLM
 
-#### Tương tác với LLM:
+#### Interaccion con LLM:
 
-Khi đã cấu hình và khởi chạy thành công, bạn có thể sử dụng LLM để:
-- Tạo và chỉnh sửa tài liệu Word thông qua lệnh tự nhiên
-- Tự động tạo nội dung dựa trên prompt
-- Định dạng văn bản, thêm hình ảnh và bảng một cách thông minh
+Una vez configurado e iniciado exitosamente, puedes usar el LLM para:
+- Crear y editar documentos Word mediante comandos en lenguaje natural
+- Generar contenido automaticamente basado en prompts
+- Formatear texto, agregar imagenes y tablas de manera inteligente
 
-### Tạo tài liệu mới
+### Crear nuevo documento
 
 ```python
 create_new_document()
 ```
 
-### Mở tài liệu có sẵn
+### Abrir documento existente
 
 ```python
-open_document("path/to/document.docx")
+open_document("ruta/al/documento.docx")
 ```
 
-### Thêm tiêu đề và đoạn văn
+### Agregar titulos y parrafos
 
 ```python
-# Thêm tiêu đề
-add_heading("Tiêu đề tài liệu", level=0)
-add_heading("Chương 1", level=1)
+# Agregar titulo
+add_heading("Titulo del documento", level=0)
+add_heading("Capitulo 1", level=1)
 
-# Thêm đoạn văn bản
-add_paragraph("Đây là nội dung đoạn văn bản.")
+# Agregar parrafo de texto
+add_paragraph("Este es el contenido del parrafo.")
 
-# Thêm đoạn văn bản với định dạng
+# Agregar parrafo con formato
 add_paragraph(
-    "Đây là đoạn văn bản được định dạng.",
+    "Este es un parrafo con formato.",
     style="Normal",
     font_size=14,
     bold=True,
@@ -97,57 +98,57 @@ add_paragraph(
 )
 ```
 
-### Thêm định dạng cho một phần văn bản
+### Agregar formato a una parte del texto
 
 ```python
-# Tạo đoạn văn bản
-p = add_paragraph("Đây là đoạn văn bản cơ bản. ")
+# Crear parrafo
+p = add_paragraph("Este es un parrafo basico. ")
 
-# Thêm phần văn bản có định dạng khác
+# Agregar parte de texto con diferente formato
 add_run_to_paragraph(
     p,
-    "Phần này được in đậm và màu đỏ.",
+    "Esta parte esta en negrita y rojo.",
     bold=True,
     color="red"
 )
 
-# Thêm phần văn bản có highlight
+# Agregar parte de texto con resaltado
 add_run_to_paragraph(
     p,
-    " Phần này được highlight màu vàng.",
+    " Esta parte tiene resaltado amarillo.",
     highlight="yellow"
 )
 ```
 
-### Thêm hình ảnh
+### Agregar imagen
 
 ```python
-# Thêm hình ảnh từ đường dẫn file
-add_picture("path/to/image.jpg", width=4.0)
+# Agregar imagen desde ruta de archivo
+add_picture("ruta/a/imagen.jpg", width=4.0)
 
-# Hoặc thêm hình ảnh từ ma trận numpy
+# O agregar imagen desde matriz numpy
 import numpy as np
 import cv2
 
-img = cv2.imread("path/to/image.jpg")
+img = cv2.imread("ruta/a/imagen.jpg")
 add_picture(img, width=3.5)
 ```
 
-### Tạo bảng
+### Crear tabla
 
 ```python
-# Tạo bảng với 3 hàng và 4 cột
+# Crear tabla con 3 filas y 4 columnas
 table = add_table(rows=3, cols=4, style="Table Grid")
 
-# Điền dữ liệu vào bảng
-table.cell(0, 0).text = "Hàng 1, Cột 1"
-table.cell(0, 1).text = "Hàng 1, Cột 2"
+# Llenar datos en la tabla
+table.cell(0, 0).text = "Fila 1, Columna 1"
+table.cell(0, 1).text = "Fila 1, Columna 2"
 # ...
 ```
 
-## Các màu hỗ trợ
+## Colores soportados
 
-Khi sử dụng các tham số `color` và `highlight`, bạn có thể sử dụng các giá trị sau:
+Al usar los parametros `color` y `highlight`, puedes usar los siguientes valores:
 
 - black
 - blue
@@ -165,47 +166,47 @@ Khi sử dụng các tham số `color` và `highlight`, bạn có thể sử d�
 - gray25
 - gray50
 
-## Lưu ý
+## Notas
 
-- Dự án này sử dụng thư viện `python-docx` để tương tác với tài liệu Word
-- Các tài nguyên và prompt được lưu trữ trong thư mục `resources` và `prompts`
-- Đảm bảo bạn đã cài đặt đầy đủ các thư viện phụ thuộc trước khi chạy server
+- Este proyecto usa la biblioteca `python-docx` para interactuar con documentos Word
+- Los recursos y prompts se almacenan en los directorios `resources` y `prompts`
+- Asegurate de haber instalado todas las bibliotecas dependientes antes de ejecutar el servidor
 
-## Ví dụ hoàn chỉnh
+## Ejemplo completo
 
 ```python
-# Tạo tài liệu mới
+# Crear nuevo documento
 create_new_document()
 
-# Thêm tiêu đề
-add_heading("Báo cáo dự án", level=0)
+# Agregar titulo
+add_heading("Informe del proyecto", level=0)
 
-# Thêm thông tin người tạo
-p = add_paragraph("Người tạo: ")
-add_run_to_paragraph(p, "Nguyễn Văn A", bold=True)
+# Agregar informacion del creador
+p = add_paragraph("Creador: ")
+add_run_to_paragraph(p, "Juan Perez", bold=True)
 
-# Thêm mục lục
-add_heading("Mục lục", level=1)
-add_paragraph("1. Giới thiệu")
-add_paragraph("2. Nội dung")
-add_paragraph("3. Kết luận")
+# Agregar indice
+add_heading("Indice", level=1)
+add_paragraph("1. Introduccion")
+add_paragraph("2. Contenido")
+add_paragraph("3. Conclusion")
 
-# Thêm nội dung
-add_heading("1. Giới thiệu", level=1)
-add_paragraph("Đây là phần giới thiệu của dự án...")
+# Agregar contenido
+add_heading("1. Introduccion", level=1)
+add_paragraph("Esta es la introduccion del proyecto...")
 
-# Thêm hình ảnh
-add_paragraph("Hình ảnh minh họa:")
-add_picture("project_diagram.jpg", width=5.0)
+# Agregar imagen
+add_paragraph("Imagen ilustrativa:")
+add_picture("diagrama_proyecto.jpg", width=5.0)
 
-# Thêm bảng dữ liệu
-add_heading("Bảng dữ liệu", level=2)
+# Agregar tabla de datos
+add_heading("Tabla de datos", level=2)
 table = add_table(rows=3, cols=3)
-table.cell(0, 0).text = "Dữ liệu 1"
-table.cell(0, 1).text = "Dữ liệu 2"
-table.cell(0, 2).text = "Dữ liệu 3"
-# Điền các dữ liệu khác...
+table.cell(0, 0).text = "Dato 1"
+table.cell(0, 1).text = "Dato 2"
+table.cell(0, 2).text = "Dato 3"
+# Llenar otros datos...
 
-# Lưu tài liệu
-save_document("bao_cao_du_an.docx")
+# Guardar documento
+save_document("informe_proyecto.docx")
 ```

@@ -17,15 +17,15 @@ mcp = FastMCP("Word MCP Server", "1.0")
 
 document = Document()
 
-# Inicializar estructura de datos para Resources y Prompts
+# Khởi tạo cấu trúc dữ liệu cho Resources và Prompts
 RESOURCES_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "resources")
 PROMPTS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "prompts")
 
-# Crear directorios resources y prompts si no existen
+# Tạo thư mục resources và prompts nếu chưa tồn tại
 os.makedirs(RESOURCES_DIR, exist_ok=True)
 os.makedirs(PROMPTS_DIR, exist_ok=True)
 
-# Diccionario para almacenar recursos y prompts en memoria
+# Dictionary lưu trữ tài nguyên và prompt trong bộ nhớ
 resources_cache = {}
 
 
@@ -69,8 +69,8 @@ def save_file(filename: str):
 def add_heading(content: str, level: int):
     """
     Add heading to the document
-        - Content: contenido del titulo o encabezado
-        - Level: nivel del encabezado (0, 1, 2, ...). Cuanto menor es el numero, mayor es la fuente.
+        - Content: nội dung title hoặc heading
+        - Level: bậc của heading (0, 1, 2, ...). Số càng nhỏ font chữ càng lớn.
     
     """
     document.add_heading(content, level)
@@ -86,7 +86,7 @@ def add_paragraph(
 ):
     """
     Add paragraph to the document
-        - Content: contenido del parrafo
+        - Content: nội dung paragraph
     """
     p = document.add_paragraph(content)
     p.style = style
@@ -111,14 +111,14 @@ def update_paragraph(
 ):
     """
     Update paragraph
-        - Content: contenido del parrafo
-        - Style: estilo del parrafo
-        - Font size: tamano de fuente del parrafo
-        - Bold: negrita o no
-        - Italic: cursiva o no
-        - Color: color del texto (black, blue, green, dark blue, dark red, dark yellow, 
+        - Content: nội dung paragraph
+        - Style: style of paragraph
+        - Font size: font size of paragraph
+        - Bold: bold or not
+        - Italic: italic or not
+        - Color: màu chữ (black, blue, green, dark blue, dark red, dark yellow, 
           dark green, pink, red, white, teal, yellow, violet, gray25, gray50)
-        - Alignment: alineacion (LEFT, RIGHT, CENTER, JUSTIFY)
+        - Alignment: căn lề (LEFT, RIGHT, CENTER, JUSTIFY)
     """
     p.style = style
     p.alignment = alignment
@@ -171,15 +171,15 @@ def add_run_to_paragraph(
     highlight: str = None
 ):
     """
-    Agregar texto a un parrafo ya inicializado
-        - p: parrafo ya inicializado
-        - content: contenido a agregar
-        - bold: negrita o no
-        - italic: cursiva o no
-        - underline: subrayado o no
-        - color: color del texto (black, blue, green, dark blue, dark red, dark yellow,
+    Thêm câu vào đoạn văn đã được khởi tạo
+        - p: paragraph đã được khởi tạo
+        - content: nội dung cần thêm
+        - bold: in đậm hoặc không
+        - italic: in nghiêng hoặc không
+        - underline: gạch chân hoặc không
+        - color: màu chữ (black, blue, green, dark blue, dark red, dark yellow,
           dark green, pink, red, white, teal, yellow, violet, gray25, gray50)
-        - highlight: color de fondo para resaltar el texto
+        - highlight: màu nền highlight cho chữ
     """
     sentence_element = p.add_run(str(content))
     sentence_element.bold = bold
@@ -234,9 +234,9 @@ def add_run_to_paragraph(
 @mcp.tool()
 def add_picture(image_path_or_stream, width: float = 5.0):
     """
-    Agregar imagen al documento
-        - image_path_or_stream: ruta al archivo de imagen o imagen en formato matriz
-        - width: ancho de la imagen (en pulgadas)
+    Thêm hình ảnh vào tài liệu
+        - image_path_or_stream: đường dẫn đến file ảnh hoặc ảnh dạng ma trận
+        - width: chiều rộng của ảnh (tính bằng inch)
     """
     if isinstance(image_path_or_stream, str):
         img = cv2.imread(image_path_or_stream)
@@ -251,32 +251,32 @@ def add_picture(image_path_or_stream, width: float = 5.0):
 @mcp.tool()
 def create_new_document():
     """
-    Crear un nuevo documento, eliminando el documento actual
+    Tạo một tài liệu mới, loại bỏ tài liệu hiện tại
     """
     global document
     document = Document()
-    return "Se ha creado un nuevo documento"
+    return "Đã tạo tài liệu mới"
 
 @mcp.tool()
 def open_document(filepath: str):
     """
-    Abrir un documento docx existente
-        - filepath: ruta al archivo docx a abrir
+    Mở một tài liệu docx có sẵn
+        - filepath: đường dẫn đến file docx cần mở
     """
     global document
     try:
         document = Document(filepath)
-        return f"Se ha abierto el documento desde {filepath}"
+        return f"Đã mở tài liệu từ {filepath}"
     except Exception as e:
-        return f"Error al abrir el documento: {str(e)}"
+        return f"Lỗi khi mở tài liệu: {str(e)}"
 
 @mcp.tool()
 def add_table(rows: int, cols: int, style: str = "Table Grid"):
     """
-    Agregar tabla al documento
-        - rows: numero de filas
-        - cols: numero de columnas
-        - style: estilo de la tabla
+    Thêm bảng vào tài liệu
+        - rows: số hàng
+        - cols: số cột
+        - style: kiểu bảng
     """
     table = document.add_table(rows=rows, cols=cols)
     table.style = style
@@ -285,35 +285,35 @@ def add_table(rows: int, cols: int, style: str = "Table Grid"):
 @mcp.tool()
 def create_table(rows: int, cols: int, style: str = "Table Grid", headers: List[str] = None):
     """
-    Crear tabla con numero de filas y columnas especificado, puede agregar encabezados
-        - rows: numero de filas (sin incluir la fila de encabezado)
-        - cols: numero de columnas
-        - style: estilo de la tabla ("Table Grid", "Light Grid", "Light Shading", etc.)
-        - headers: lista de encabezados de columna (longitud igual al numero de columnas)
+    Tạo bảng với số hàng và cột chỉ định, có thể thêm tiêu đề
+        - rows: số hàng (không bao gồm hàng tiêu đề)
+        - cols: số cột
+        - style: kiểu bảng ("Table Grid", "Light Grid", "Light Shading", etc.)
+        - headers: danh sách các tiêu đề cột (độ dài bằng số cột)
     """
     try:
-        # Si hay headers, agregar 1 fila para el encabezado
+        # Nếu có headers, thêm 1 hàng cho tiêu đề
         actual_rows = rows
         if headers:
             if len(headers) != cols:
-                return f"Error: El numero de encabezados ({len(headers)}) es diferente al numero de columnas ({cols})"
+                return f"Lỗi: Số lượng tiêu đề ({len(headers)}) khác với số cột ({cols})"
             actual_rows = rows + 1
             
-        # Crear tabla
+        # Tạo bảng
         table = document.add_table(rows=actual_rows, cols=cols)
         table.style = style
         
-        # Agregar encabezados si existen
+        # Thêm tiêu đề nếu có
         if headers:
             for i, header in enumerate(headers):
                 cell = table.cell(0, i)
                 cell.text = header
-                # Formato del encabezado (negrita, centrado)
+                # Định dạng tiêu đề (in đậm, căn giữa)
                 for paragraph in cell.paragraphs:
                     for run in paragraph.runs:
                         run.bold = True
         
-        # Devolver informacion de la tabla para uso posterior
+        # Trả về thông tin của bảng để có thể sử dụng sau này
         table_info = {
             "table_object": table,
             "rows": actual_rows,
@@ -321,72 +321,72 @@ def create_table(rows: int, cols: int, style: str = "Table Grid", headers: List[
             "has_headers": bool(headers)
         }
         
-        # Guardar informacion de la tabla en resources para acceso posterior
+        # Lưu thông tin bảng vào resources để có thể truy cập sau này
         table_id = f"table_{id(table)}"
         save_resource(table_id, table_info)
         
         return {
             "table_id": table_id,
             "table_object": table,
-            "message": f"Se ha creado una tabla con {actual_rows} filas y {cols} columnas"
+            "message": f"Đã tạo bảng với {actual_rows} hàng và {cols} cột"
         }
     except Exception as e:
-        error_msg = f"Error al crear la tabla: {str(e)}"
+        error_msg = f"Lỗi khi tạo bảng: {str(e)}"
         print(error_msg)
         return error_msg
 
 @mcp.tool()
 def update_cell(table, row: int, col: int, content: str):
     """
-    Actualizar contenido de una celda en la tabla
-        - table: tabla a actualizar (objeto Table o descripcion de cadena)
-        - row: indice de fila
-        - col: indice de columna
-        - content: contenido a actualizar
+    Cập nhật nội dung cho một ô trong bảng
+        - table: bảng cần cập nhật (đối tượng Table hoặc mô tả chuỗi)
+        - row: chỉ số hàng
+        - col: chỉ số cột
+        - content: nội dung cần cập nhật
     """
     try:
         # Print debug info
         print(f"Updating cell: row={row}, col={col}, table type={type(table)}")
         
-        # Manejar caso donde table es una cadena
+        # Xử lý trường hợp table là chuỗi
         if isinstance(table, str):
             print(f"Table is a string: {table}")
-            # Usar la ultima tabla agregada al documento
+            # Sử dụng bảng cuối cùng được thêm vào document
             if not document.tables:
-                return "No se encontro ninguna tabla en el documento"
+                return "Không tìm thấy bảng nào trong tài liệu"
                 
             print(f"Using last table in document. Total tables: {len(document.tables)}")
             real_table = document.tables[-1]
         else:
             real_table = table
         
-        # Acceder a la celda segun la documentacion recomendada
+        # Truy cập vào ô theo cách được khuyến nghị trong tài liệu
         try:
             if row >= len(real_table.rows):
-                return f"Error: El indice de fila {row} excede el numero de filas en la tabla ({len(real_table.rows)})"
+                return f"Lỗi: Chỉ số hàng {row} vượt quá số hàng trong bảng ({len(real_table.rows)})"
                 
             row_cells = real_table.rows[row].cells
             
             if col >= len(row_cells):
-                return f"Error: El indice de columna {col} excede el numero de columnas en la fila ({len(row_cells)})"
+                return f"Lỗi: Chỉ số cột {col} vượt quá số cột trong hàng ({len(row_cells)})"
                 
             cell = row_cells[col]
             
-            # Limpiar contenido actual
+            # Xóa nội dung hiện tại
             cell.text = ""
             
-            # Agregar nuevo contenido
+            # Thêm nội dung mới
             paragraph = cell.paragraphs[0]
             run = paragraph.add_run(content)
-            run.font.size = Pt(10)  # Tamano de fuente predeterminado
+            run.font.size = Pt(10)  # Kích thước font mặc định
             
             return cell
         except Exception as cell_error:
-            error_msg = f"Error al acceder a la celda: {str(cell_error)}"
+            error_msg = f"Lỗi khi truy cập ô: {str(cell_error)}"
             print(error_msg)
             return error_msg
     except Exception as e:
-        error_msg = f"Error al actualizar la celda: {str(e)}"
+        error_msg = f"Lỗi khi cập nhật ô: {str(e)}"
         print(error_msg)
         import traceback
         print(traceback.format_exc())
@@ -395,55 +395,55 @@ def update_cell(table, row: int, col: int, content: str):
 @mcp.tool()
 def add_page_break():
     """
-    Agregar salto de pagina
+    Thêm ngắt trang
     """
     document.add_page_break()
-    return "Se ha agregado un salto de pagina"
+    return "Đã thêm ngắt trang"
 
 @mcp.tool()
 def fill_table_cell(table, row: int, col: int, content: str, bold: bool = False, alignment = None, font_size: int = None):
     """
-    Llenar contenido en una celda de la tabla con formato
-        - table: objeto de tabla o table_id (cadena)
-        - row: indice de fila
-        - col: indice de columna
-        - content: contenido a agregar
-        - bold: negrita o no
-        - alignment: alineacion (LEFT, RIGHT, CENTER)
-        - font_size: tamano de fuente
+    Điền nội dung vào ô trong bảng với định dạng
+        - table: đối tượng bảng hoặc table_id (chuỗi)
+        - row: chỉ số hàng
+        - col: chỉ số cột
+        - content: nội dung cần thêm
+        - bold: in đậm hay không
+        - alignment: căn lề (LEFT, RIGHT, CENTER)
+        - font_size: kích thước font
     """
     try:
         # Print debug info
         print(f"Filling cell: row={row}, col={col}, content={content}, table type={type(table)}")
         
-        # Manejar caso donde table es una cadena (table_id)
+        # Xử lý trường hợp table là chuỗi (table_id)
         if isinstance(table, str):
             print(f"Table is a string ID: {table}")
             
-            # Caso 1: Es un table_id de la funcion create_table
+            # Trường hợp 1: Đây là table_id từ hàm create_table
             if table.startswith('table_'):
                 table_info = get_resource(table)
                 if isinstance(table_info, dict) and "table_object" in table_info:
                     real_table = table_info["table_object"]
                 else:
-                    # Caso 2: Usar la ultima tabla en el documento
+                    # Trường hợp 2: Sử dụng bảng cuối cùng trong tài liệu
                     if not document.tables:
-                        return "No se encontro ninguna tabla en el documento"
+                        return "Không tìm thấy bảng nào trong tài liệu"
                     real_table = document.tables[-1]
             else:
-                # Caso 3: Usar la ultima tabla en el documento
+                # Trường hợp 3: Sử dụng bảng cuối cùng trong tài liệu
                 if not document.tables:
-                    return "No se encontro ninguna tabla en el documento"
+                    return "Không tìm thấy bảng nào trong tài liệu"
                 real_table = document.tables[-1]
         else:
             real_table = table
         
-        # Verificar si hay suficientes filas y columnas
+        # Kiểm tra có đủ hàng và cột không
         if row >= len(real_table.rows):
-            return f"Error: El indice de fila {row} excede el numero de filas en la tabla ({len(real_table.rows)})"
+            return f"Lỗi: Chỉ số hàng {row} vượt quá số hàng trong bảng ({len(real_table.rows)})"
             
         if col >= len(real_table.rows[row].cells):
-            return f"Error: El indice de columna {col} excede el numero de columnas en la fila ({len(real_table.rows[row].cells)})"
+            return f"Lỗi: Chỉ số cột {col} vượt quá số cột trong hàng ({len(real_table.rows[row].cells)})"
             
         # Truy cập ô
         cell = real_table.rows[row].cells[col]
@@ -475,7 +475,7 @@ def fill_table_cell(table, row: int, col: int, content: str, bold: bool = False,
         
         return paragraph
     except Exception as e:
-        error_msg = f"Error al llenar contenido en la celda: {str(e)}"
+        error_msg = f"Lỗi khi điền nội dung vào ô: {str(e)}"
         print(error_msg)
         import traceback
         print(traceback.format_exc())
@@ -484,10 +484,10 @@ def fill_table_cell(table, row: int, col: int, content: str, bold: bool = False,
 @mcp.tool()
 def add_table_row(table, data: List[str], is_header: bool = False):
     """
-    Agregar una fila a la tabla con los datos proporcionados
-        - table: objeto de tabla
-        - data: lista de datos para cada celda
-        - is_header: si es una fila de encabezado o no
+    Thêm một hàng vào bảng với dữ liệu được cung cấp
+        - table: đối tượng bảng
+        - data: danh sách dữ liệu cho từng ô
+        - is_header: có phải hàng tiêu đề không
     """
     try:
         # Print debug info
@@ -509,38 +509,38 @@ def add_table_row(table, data: List[str], is_header: bool = False):
         
         return row
     except Exception as e:
-        error_msg = f"Error al agregar fila a la tabla: {str(e)}"
+        error_msg = f"Lỗi khi thêm hàng vào bảng: {str(e)}"
         print(error_msg)
         return error_msg
 
 @mcp.tool()
 def create_simple_table_with_data(headers: List[str], data: List[List[str]], style: str = "Table Grid"):
     """
-    Crear una tabla completa con datos
-        - headers: lista de encabezados de columna
-        - data: lista de filas de datos
-        - style: estilo de la tabla
+    Tạo một bảng hoàn chỉnh với dữ liệu
+        - headers: danh sách tiêu đề cột
+        - data: danh sách các hàng dữ liệu
+        - style: kiểu bảng
     """
     try:
         if not headers or not data:
-            return "Error: headers o data no pueden estar vacios"
+            return "Lỗi: headers hoặc data không được để trống"
             
         cols = len(headers)
         
-        # Verificar que las filas de datos tengan el numero correcto de columnas
+        # Kiểm tra xem các hàng dữ liệu có đúng số cột không
         for i, row in enumerate(data):
             if len(row) != cols:
-                return f"Error: La fila {i} tiene {len(row)} columnas pero necesita {cols} columnas"
+                return f"Lỗi: Hàng {i} có {len(row)} cột nhưng cần {cols} cột"
         
-        # Crear tabla con numero de filas igual a cantidad de datos + 1 fila de encabezado
+        # Tạo bảng với số hàng bằng số lượng dữ liệu + 1 hàng tiêu đề
         table = document.add_table(rows=1, cols=cols)  # Start with 1 row for headers
         table.style = style
         
-        # Llenar encabezados
+        # Điền tiêu đề
         for i, header in enumerate(headers):
             fill_table_cell(table, 0, i, header, bold=True, alignment="CENTER")
         
-        # Llenar datos
+        # Điền dữ liệu
         for row_data in data:
             row = table.add_row()
             for i, cell_data in enumerate(row_data):
@@ -548,29 +548,29 @@ def create_simple_table_with_data(headers: List[str], data: List[List[str]], sty
         
         return table
     except Exception as e:
-        error_msg = f"Error al crear tabla con datos: {str(e)}"
+        error_msg = f"Lỗi khi tạo bảng với dữ liệu: {str(e)}"
         print(error_msg)
         return error_msg
 
-# SECCION RESOURCES - gestion de recursos
+# PHẦN RESOURCES - quản lý tài nguyên
 @mcp.tool()
 def save_resource(resource_id: str, content: Any) -> str:
     """
-    Guardar recurso en memoria y sistema de archivos
+    Lưu tài nguyên vào bộ nhớ và hệ thống file
     
-    - resource_id: identificador unico para el recurso
-    - content: contenido del recurso (texto, ruta de archivo o datos JSON)
+    - resource_id: định danh duy nhất cho tài nguyên
+    - content: nội dung của tài nguyên (chuỗi văn bản, đường dẫn đến file, hoặc dữ liệu JSON)
     
-    Retorna: Mensaje de resultado
+    Trả về: Thông báo kết quả
     """
     try:
         # Print debug info
         print(f"Saving resource: '{resource_id}', content type: {type(content)}")
         
-        # Guardar en cache de memoria
+        # Lưu vào cache bộ nhớ
         resources_cache[resource_id] = content
         
-        # Guardar en archivo
+        # Lưu vào file
         resource_path = os.path.join(RESOURCES_DIR, f"{resource_id}.json")
         
         # If content is a file path and exists
@@ -595,97 +595,97 @@ def save_resource(resource_id: str, content: Any) -> str:
                 else:
                     json.dump({"content": str(content)}, f, ensure_ascii=False, indent=2)
         
-        return f"Se ha guardado el recurso '{resource_id}' exitosamente"
+        return f"Đã lưu tài nguyên '{resource_id}' thành công"
     except Exception as e:
-        error_msg = f"Error al guardar recurso: {str(e)}"
+        error_msg = f"Lỗi khi lưu tài nguyên: {str(e)}"
         print(error_msg)  # Debug print
         return error_msg
 
 @mcp.tool()
 def get_resource(resource_id: str) -> Any:
     """
-    Obtener recurso desde cache de memoria o sistema de archivos
+    Lấy tài nguyên từ bộ nhớ cache hoặc file hệ thống
     
-    - resource_id: identificador del recurso a obtener
+    - resource_id: định danh của tài nguyên cần lấy
     
-    Retorna: Contenido del recurso o mensaje de error
+    Trả về: Nội dung của tài nguyên hoặc thông báo lỗi
     """
-    # Verificar en cache
+    # Kiểm tra trong cache
     if resource_id in resources_cache:
         return resources_cache[resource_id]
     
-    # No esta en cache, intentar leer desde archivo
+    # Không có trong cache, thử đọc từ file
     resource_path = os.path.join(RESOURCES_DIR, f"{resource_id}.json")
     try:
         if os.path.exists(resource_path):
             with open(resource_path, 'r', encoding='utf-8') as f:
                 data = json.load(f)
-                # Si los datos se guardaron en formato simple, obtener el campo content
+                # Nếu dữ liệu được lưu dưới dạng đơn giản, lấy trường content
                 if isinstance(data, dict) and len(data) == 1 and "content" in data:
                     content = data["content"]
                 else:
                     content = data
                 
-                # Actualizar en cache
+                # Cập nhật vào cache
                 resources_cache[resource_id] = content
                 return content
         else:
-            return f"No se encontro el recurso '{resource_id}'"
+            return f"Không tìm thấy tài nguyên '{resource_id}'"
     except Exception as e:
-        return f"Error al leer recurso: {str(e)}"
+        return f"Lỗi khi đọc tài nguyên: {str(e)}"
 
 @mcp.tool()
 def list_resources() -> List[str]:
     """
-    Listar todos los recursos disponibles
+    Liệt kê danh sách tất cả tài nguyên có sẵn
     
-    Retorna: Lista de identificadores de recursos
+    Trả về: Danh sách các định danh tài nguyên
     """
-    # Obtener lista del directorio
+    # Lấy danh sách từ thư mục
     resources = []
     if os.path.exists(RESOURCES_DIR):
         for filename in os.listdir(RESOURCES_DIR):
             if filename.endswith('.json'):
-                resources.append(filename[:-5])  # Quitar extension .json
+                resources.append(filename[:-5])  # Bỏ phần mở rộng .json
     
     return resources
 
 @mcp.tool()
 def delete_resource(resource_id: str) -> str:
     """
-    Eliminar recurso
+    Xóa tài nguyên
     
-    - resource_id: identificador del recurso a eliminar
+    - resource_id: định danh của tài nguyên cần xóa
     
-    Retorna: Mensaje de resultado
+    Trả về: Thông báo kết quả
     """
-    # Eliminar del cache
+    # Xóa khỏi cache
     if resource_id in resources_cache:
         del resources_cache[resource_id]
     
-    # Eliminar archivo
+    # Xóa file
     resource_path = os.path.join(RESOURCES_DIR, f"{resource_id}.json")
     try:
         if os.path.exists(resource_path):
             os.remove(resource_path)
-            return f"Se ha eliminado el recurso '{resource_id}' exitosamente"
+            return f"Đã xóa tài nguyên '{resource_id}' thành công"
         else:
-            return f"No se encontro el recurso '{resource_id}'"
+            return f"Không tìm thấy tài nguyên '{resource_id}'"
     except Exception as e:
-        return f"Error al eliminar recurso: {str(e)}"
+        return f"Lỗi khi xóa tài nguyên: {str(e)}"
 
-# SECCION PROMPT - gestion de templates y prompts
+# PHẦN PROMPT - quản lý templates và prompts
 @mcp.tool()
 def save_prompt(prompt_id: str, template: str, description: str = "", metadata: Dict = None) -> str:
     """
-    Guardar template de prompt
+    Lưu prompt template
     
-    - prompt_id: identificador unico para el prompt
-    - template: contenido del template, puede contener variables en formato {nombre_variable}
-    - description: descripcion del proposito y uso del prompt
-    - metadata: informacion adicional sobre el prompt (tags, autor, etc.)
+    - prompt_id: định danh duy nhất cho prompt
+    - template: nội dung mẫu của prompt, có thể chứa biến dạng {variable_name}
+    - description: mô tả về mục đích và cách sử dụng của prompt
+    - metadata: thông tin bổ sung về prompt (tags, tác giả, v.v.)
     
-    Retorna: Mensaje de resultado
+    Trả về: Thông báo kết quả
     """
     prompt_data = {
         "template": template,
@@ -694,23 +694,23 @@ def save_prompt(prompt_id: str, template: str, description: str = "", metadata: 
         "created_at": str(import_datetime_and_get_now())
     }
     
-    # Guardar en archivo
+    # Lưu vào file
     prompt_path = os.path.join(PROMPTS_DIR, f"{prompt_id}.json")
     try:
         with open(prompt_path, 'w', encoding='utf-8') as f:
             json.dump(prompt_data, f, ensure_ascii=False, indent=2)
-        return f"Se ha guardado el prompt '{prompt_id}' exitosamente"
+        return f"Đã lưu prompt '{prompt_id}' thành công"
     except Exception as e:
-        return f"Error al guardar prompt: {str(e)}"
+        return f"Lỗi khi lưu prompt: {str(e)}"
 
 @mcp.tool()
 def get_prompt(prompt_id: str) -> Dict:
     """
-    Obtener informacion sobre un prompt
+    Lấy thông tin về một prompt
     
-    - prompt_id: identificador del prompt a obtener
+    - prompt_id: định danh của prompt cần lấy
     
-    Retorna: Informacion completa del prompt o mensaje de error
+    Trả về: Thông tin đầy đủ về prompt hoặc thông báo lỗi
     """
     prompt_path = os.path.join(PROMPTS_DIR, f"{prompt_id}.json")
     try:
@@ -718,53 +718,53 @@ def get_prompt(prompt_id: str) -> Dict:
             with open(prompt_path, 'r', encoding='utf-8') as f:
                 return json.load(f)
         else:
-            return {"error": f"No se encontro el prompt '{prompt_id}'"}
+            return {"error": f"Không tìm thấy prompt '{prompt_id}'"}
     except Exception as e:
-        return {"error": f"Error al leer prompt: {str(e)}"}
+        return {"error": f"Lỗi khi đọc prompt: {str(e)}"}
 
 @mcp.tool()
 def list_prompts() -> List[str]:
     """
-    Listar todos los prompts disponibles
+    Liệt kê danh sách tất cả prompts có sẵn
     
-    Retorna: Lista de identificadores de prompts
+    Trả về: Danh sách các định danh prompt
     """
     prompts = []
     if os.path.exists(PROMPTS_DIR):
         for filename in os.listdir(PROMPTS_DIR):
             if filename.endswith('.json'):
-                prompts.append(filename[:-5])  # Quitar extension .json
+                prompts.append(filename[:-5])  # Bỏ phần mở rộng .json
     
     return prompts
 
 @mcp.tool()
 def delete_prompt(prompt_id: str) -> str:
     """
-    Eliminar prompt
+    Xóa prompt
     
-    - prompt_id: identificador del prompt a eliminar
+    - prompt_id: định danh của prompt cần xóa
     
-    Retorna: Mensaje de resultado
+    Trả về: Thông báo kết quả
     """
     prompt_path = os.path.join(PROMPTS_DIR, f"{prompt_id}.json")
     try:
         if os.path.exists(prompt_path):
             os.remove(prompt_path)
-            return f"Se ha eliminado el prompt '{prompt_id}' exitosamente"
+            return f"Đã xóa prompt '{prompt_id}' thành công"
         else:
-            return f"No se encontro el prompt '{prompt_id}'"
+            return f"Không tìm thấy prompt '{prompt_id}'"
     except Exception as e:
-        return f"Error al eliminar prompt: {str(e)}"
+        return f"Lỗi khi xóa prompt: {str(e)}"
 
 @mcp.tool()
 def render_prompt(prompt_id: str, variables: Dict = None) -> str:
     """
-    Renderizar un prompt con las variables proporcionadas
+    Render một prompt với các biến được cung cấp
     
-    - prompt_id: identificador del prompt
-    - variables: diccionario con valores de reemplazo para las variables del template
+    - prompt_id: định danh của prompt
+    - variables: từ điển chứa các giá trị thay thế cho các biến trong template
     
-    Retorna: Prompt renderizado con las variables reemplazadas
+    Trả về: Prompt đã được render với các biến được thay thế
     """
     prompt_info = get_prompt(prompt_id)
     
@@ -773,15 +773,15 @@ def render_prompt(prompt_id: str, variables: Dict = None) -> str:
     
     template = prompt_info.get("template", "")
     
-    # Realizar reemplazo de variables
+    # Thực hiện thay thế biến
     if variables:
         try:
-            # Usar format string de Python
+            # Sử dụng format string của Python
             for key, value in variables.items():
                 placeholder = "{" + key + "}"
                 template = template.replace(placeholder, str(value))
         except Exception as e:
-            return f"Error al renderizar prompt: {str(e)}"
+            return f"Lỗi khi render prompt: {str(e)}"
     
     return template
 
@@ -791,5 +791,5 @@ def import_datetime_and_get_now():
     return datetime.now()
 
 if __name__ == "__main__":
-    print("Server starting...")
+    print("Server đang khởi động...")
     mcp.run(transport="stdio")
